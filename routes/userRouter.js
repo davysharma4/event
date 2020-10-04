@@ -32,7 +32,7 @@ router.route('/campusAmbassadors')
 });
 
 router.post('/signup', (req, res, next) => {
-  User.register(new User({username: req.body.username}), 
+  User.register(new User({username: req.body.username, emailID: req.body.emailID}), 
     req.body.password, (err, user) => {
     if(err) {
       res.statusCode = 500;
@@ -44,7 +44,7 @@ router.post('/signup', (req, res, next) => {
         user.firstname = req.body.firstname;
       if (req.body.lastname)
         user.lastname = req.body.lastname;
-      user.email = req.body.email;
+
       user.save((err, user) => {
         if (err) {
           res.statusCode = 500;
