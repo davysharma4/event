@@ -19,7 +19,8 @@ var User = new Schema(
         emailID:
         {
             type: Email,
-            required: true
+            required: true,
+            unique: true
         },
         facebookId:
         {
@@ -31,6 +32,11 @@ var User = new Schema(
             default: false
         },
         campusAmbassador:
+        {
+            type: Boolean,
+            default: false
+        },
+        emailVerified:
         {
             type: Boolean,
             default: false
