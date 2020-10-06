@@ -20,7 +20,6 @@ var User = new Schema(
         {
             type: Email,
             required: true,
-            unique: true
         },
         facebookId:
         {
@@ -40,7 +39,13 @@ var User = new Schema(
         {
             type: Boolean,
             default: false
+        },
+        college:
+        {
+            type: String,
+            default: 'MNNIT'
         }
+
     }
 );
 
