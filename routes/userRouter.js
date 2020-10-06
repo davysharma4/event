@@ -22,31 +22,6 @@ router.route('/')
   .catch((err)=>next(err));
 });
 
-router.route('/campusAmbassadors')
-.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{
-    User.find({campusAmbassador: true})
-    .then((users)=>
-    {
-      res.statusCode = 200;
-      res.setHeader('Content-Type','application/json');
-      res.json(users);
-    }, (err)=>next(err))
-    .catch((err)=>next(err));
-});
-
-router.route('/myCollegeUsers')
-.get(authenticate.verifyUser, authenticate.verifyCampusAmbassador, (req, res, next)=>
-{
-  User.find({college: req.user.college})
-  .then((users)=>
-  {
-    res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json(users);
-  }, (err)=>next(err))
-  .catch((err)=>next(err));
-});
 
 router.post('/signup', (req, res, next) => {
   User.register(new User({username: req.body.username, emailID: req.body.emailID}), 

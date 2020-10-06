@@ -14,6 +14,7 @@ require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/userRouter');
+var ambassadorRouter = require('./routes/ambassadorRouter');
 const { mongo, Mongoose } = require('mongoose');
 const { db } = require('./models/user');
 
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', userRouter);
+app.use('/campusAmbassadors', ambassadorRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
