@@ -44,7 +44,14 @@ var User = new Schema(
         {
             type: String,
             default: 'MNNIT'
-        }
+        },
+        points:
+        {
+            type: Number,
+            default: 0
+        },
+        invites:
+        [{type: String}]
 
     }
 );

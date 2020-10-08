@@ -7,6 +7,7 @@ const authenticate = require('../authenticate');
 const Token = require('../models/verifyToken');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const config = require('../config');
 require('dotenv').config();
 
 router.route('/')
@@ -61,11 +62,11 @@ router.post('/signup', (req, res, next) => {
               return;
             }
  
-            var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: 'hikigayadoeswebster@gmail.com', pass: process.env.PASSWORD } });
+            var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email, pass: process.env.PASSWORD } });
             var link = 'http:\/\/' + req.headers.host + '\/users\/confirmation\/' + token.token;
             var mailOptions =
             {
-              from: 'process.env.USERNAME',
+              from: config.email,
               to: user.emailID,
               subject: 'Account Verification Token',
               html: '<p>Please verify your account by clicking the button</p><form action="'+
@@ -138,11 +139,11 @@ router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, ne
       return;
     }
 
-    var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: 'hikigayadoeswebster@gmail.com', pass: process.env.PASSWORD } });
+    var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email , pass: process.env.PASSWORD } });
     var link = 'http:\/\/' + req.headers.host + '\/users\/confirmation\/' + token.token;
     var mailOptions =
     {
-      from: 'process.env.USERNAME',
+      from: config.email,
       to: req.user.emailID,
       subject: 'Account Verification Token',
       html: '<p>Please verify your account by clicking the button</p><form action="'+
