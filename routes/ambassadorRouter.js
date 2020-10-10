@@ -9,6 +9,8 @@ const Request = require('../models/ambassadorReq');
 const { request } = require('express');
 require('dotenv').config();
 
+
+//this route for the admins to fetch the list of campus ambassadors
 router.route('/')
 .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
@@ -22,6 +24,7 @@ router.route('/')
     .catch((err)=>next(err));
 });
 
+//this route is for campus ambassadors to fetch the list of their college users
 router.route('/myCollegeUsers')
 .get(authenticate.verifyUser, authenticate.verifyCampusAmbassador, (req, res, next)=>
 {
@@ -38,6 +41,7 @@ router.route('/myCollegeUsers')
 router.route('/requests')
 .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
+  //admins can see all the requests posted by users to be campus ambassadors
   Request.find({})
   .then((requests)=>
   {
@@ -48,12 +52,12 @@ router.route('/requests')
   .catch((err)=>next(err));
 })
 .post(authenticate.verifyUser,  (req, res, next)=>
-{
+{//users can post requests to be campus ambassadors
   if(req.user.campusAmbassador == false)
-  {
+  {//only non campus ambassadors can post requests
     Request.exists({user: req.user._id})
     .then((result)=>
-    {
+    {//each user can post only 1 request
       if(result)
       {
         res.statusCode = 400;
@@ -84,7 +88,7 @@ router.route('/requests')
   }
 })
 .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{
+{//admins can remove all the requests
   Request.remove({})
   .then((requests)=>
   {
@@ -96,8 +100,8 @@ router.route('/requests')
 });
 
 router.route('/requests/:reqID')
-.get(authenticate.verifyUser, authenticate.verifyUser, (req, res, next)=>
-{
+.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+{//admin can see a particular request
   Request.findOne({_id: req.params.reqID})
   .then((request)=>
   {
@@ -108,7 +112,7 @@ router.route('/requests/:reqID')
   .catch((err)=>next(err));
 })
 .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{
+{//this operation either accepts or declines a request. if the accept field in body is true...then request is accepted
   var accepted = "Request declined";
   Request.findOne({_id: req.params.reqID})
   .then((request)=>
@@ -128,7 +132,7 @@ router.route('/requests/:reqID')
 
   Request.findByIdAndRemove(req.params.reqID)
   .then((request)=>
-  {
+  {//after accepting or rejecting a request, the request is deleted
     res.statusCode = 200;
     res.setHeader('Content-Type','application/json');
     res.json({status: accepted});
@@ -136,7 +140,7 @@ router.route('/requests/:reqID')
   .catch((err)=>next(err));
 })
 .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{
+{//admins can delete a particular request
   Request.findByIdAndRemove(req.params.reqID)
   .then((request)=>
   {
@@ -150,6 +154,7 @@ router.route('/requests/:reqID')
 router.route('/makeCampusAmbassador')
 .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
+  //admins can make users campus ambassadors directly by using the username of the user
   User.findOne({username: req.body.username})
   .then((user)=>
   {
@@ -177,9 +182,10 @@ router.route('/makeCampusAmbassador')
 
 router.route('/invite')
 .post(authenticate.verifyUser, authenticate.verifyCampusAmbassador, (req, res, next)=>
-{
+{//campus ambassadors can send invites using email
   if(req.user.invites.includes(req.body.email))
-  {
+  {//only one invite to one user. We make an array of the emails to which user the campus ambassador has sent the request and check if that 
+    //email is already in that array
     res.statusCode = 400;
     res.setHeader('Content-type','application/json');
     res.json({status: 'You already invited this user'});
@@ -190,6 +196,7 @@ router.route('/invite')
   req.user.save();
   var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email , pass: process.env.PASSWORD } });
   var link = 'http:\/\/' + req.headers.host +'\/campusAmbassadors\/invite\/'+req.user.username + '\/' + req.body.email;
+  //the link contains the username of the campus ambassador and the email to which invite is send. They'll be used later.
   var name = req.user.firstname + " " + req.user.lastname ;
   var mailOptions =
   {
@@ -222,9 +229,11 @@ router.route('/invite/:username/:email')
 {
   User.findOne({username: req.params.username})
   .then((user)=>
-  {
+  {//we find the campus ambassador who sent the request and give him a point.
     if(!user.invites.includes(req.params.email))
     user.points++;
+    //the if statement above is used to prevent the scenario where an invited person clicks on a link repeatedly and it gives multiple points
+    //to the campus ambassador for a single invite
 
     user.save()
     .then((user)=>

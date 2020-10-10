@@ -5,6 +5,7 @@ const Request = new Schema(
     {
         user:
         {
+            //we store the user _id in the requests to know the which user has requested
             type:  Schema.Types.ObjectId,
             ref: 'User'
         }

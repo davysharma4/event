@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const config = require('../config');
 require('dotenv').config();
 
+//gives admin the privilege to fetch a list of users
 router.route('/')
 .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
@@ -23,7 +24,7 @@ router.route('/')
   .catch((err)=>next(err));
 });
 
-
+//signing up users
 router.post('/signup', (req, res, next) => {
   User.register(new User({username: req.body.username, emailID: req.body.emailID}), 
     req.body.password, (err, user) => {
@@ -35,6 +36,7 @@ router.post('/signup', (req, res, next) => {
     }
     else
     {
+      //setting the first name and lastname of the user
       if (req.body.firstname)
         user.firstname = req.body.firstname;
       if (req.body.lastname)
@@ -51,7 +53,10 @@ router.post('/signup', (req, res, next) => {
         }
         else
         {
+          //this is send an email to the user to verify the email ID entered
           var token = new Token({user: user._id, token: crypto.randomBytes(16).toString('hex')});
+          //we generate a token to the user
+
           token.save((err, token)=>
           {
             if (err)
@@ -61,7 +66,8 @@ router.post('/signup', (req, res, next) => {
               res.json({err: err});
               return;
             }
- 
+            
+            //we attach the token in the link as a param. So when the user clicks the button, he/she is redirected to confirmation token route
             var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email, pass: process.env.PASSWORD } });
             var link = 'http:\/\/' + req.headers.host + '\/users\/confirmation\/' + token.token;
             var mailOptions =
@@ -94,16 +100,19 @@ router.post('/signup', (req, res, next) => {
   });
 });
 
+//we see if the token in the request param matches any token in our database 
 router.post('/confirmation/:token', (req, res, next)=>
 {
   Token.findOne({token: req.params.token})
   .then((token)=>
   {
+    //after finding a token, we find the user attached to it
     User.findOne({_id: token.user})
     .then((user)=>
     {
       if(user.emailVerified == true)
       {
+        //This is in case user generates another token or click the same link again
         res.statusCode = 400;
         res.setHeader('Content-Type', 'application/json');
         res.json({status: 'You are already verified'});
@@ -111,7 +120,7 @@ router.post('/confirmation/:token', (req, res, next)=>
 
       else
       {
-
+        //if user is not verified we verify him
         user.emailVerified = true;
         user.save()
         .then((user)=>
@@ -126,6 +135,7 @@ router.post('/confirmation/:token', (req, res, next)=>
   .catch((err)=>next(err));
 });
 
+//This is required if the user fails to open the link sent via mail in specified time
 router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, next)=>
 {
   var token = new Token({user: req.user._id, token: crypto.randomBytes(16).toString('hex')});
@@ -169,7 +179,7 @@ router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, ne
 
 router.post('/login', passport.authenticate('local'), (req, res) => {
   if(req.user.emailVerified == true)
-  {
+  {//we only only verified users to login. We generate a JWT to the verified users
     var token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -182,6 +192,22 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     res.json({success: false, status: 'Please verify your email first'});
   }
 
+  });
+
+
+  //google signup/login. Scope mentions the required details of the user 
+  router.get('/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+  //this is where the user is redirected after authentication with google
+  router.get('/google/callback', passport.authenticate('google'), (req, res)=>
+  {
+    if (req.user)
+    {//if the user is found or created we generate a JWT for further requests
+      var token = authenticate.getToken({_id: req.user._id});
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    }
   });
 
   module.exports = router;

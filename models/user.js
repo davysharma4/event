@@ -20,8 +20,9 @@ var User = new Schema(
         {
             type: Email,
             required: true,
+            unique: true
         },
-        facebookId:
+        google:
         {
             type: String
         },
