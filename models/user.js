@@ -50,10 +50,7 @@ var User = new Schema(
         {
             type: Number,
             default: 0
-        },
-        invites:
-        [{type: String}]
-
+        }
     }
 );
 
