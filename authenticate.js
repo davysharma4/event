@@ -87,6 +87,7 @@ exports.googlePassport = passport.use(new GoogleStrategy(
                 user.google = profile.id;
                 user.firstname = profile.name.givenName;
                 user.lastname = profile.name.familyName;
+                user.emailVerified = true;
                 user.save((err, user) => {
                     if (err)
                         return done(err, false);
