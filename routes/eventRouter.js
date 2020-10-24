@@ -38,8 +38,12 @@ router.route('/')
     {
         
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(event);
+        res.setHeader('Content-Type', 'text/html');
+        var viewData = 
+        {
+            n: event
+        };
+        res.render('event', viewData);
         
     }, (err)=>next(err))
     .catch((err)=>next(err));

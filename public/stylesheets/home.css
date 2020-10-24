@@ -1,0 +1,70 @@
+h1
+{
+  font-size: 4rem;
+  font-family: 'Grandstander', cursive;
+}
+
+body
+{
+  font-family: 'Henny Penny', cursive;
+}
+
+h2
+{
+  padding-bottom: 3%;
+}
+
+.main
+{
+  margin: 0%;
+  text-align: center;
+  background-color: rgb(255, 226, 146);
+}
+
+.nav-item
+{
+  font-size: 1.2rem;
+}
+.fa-angle-double-down
+{
+  font-size: 2rem;
+  color: aliceblue;
+}
+
+.footer
+{
+  text-align: center;
+  color: aliceblue;
+  background-color: hsl(0, 0%, 0%);
+  padding: 5% 2% 5%;
+}
+
+.timer
+{
+  padding: 7%;
+}
+
+#navLogo
+{
+  height: 5rem;
+  width: 5rem;
+}
+
+#countdown
+{
+  font-family: 'Monoton', cursive;
+  color: rgb(255, 6, 6);
+  font-size: 3rem;
+}
+
+#logo
+{
+  margin-top: 7%;
+  height: 250px;
+  width: 250px;
+}
+
+#dance
+{
+  margin-top: 20%;
+}

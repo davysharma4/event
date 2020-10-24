@@ -17,7 +17,6 @@ var userRouter = require('./routes/userRouter');
 var ambassadorRouter = require('./routes/ambassadorRouter');
 var forgotRouter = require('./routes/forgotRouter');
 var eventRouter = require('./routes/eventRouter');
-var commentRouter = require('./routes/commentRouter');
 const { mongo, Mongoose } = require('mongoose');
 const { db } = require('./models/user');
 
@@ -32,7 +31,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
