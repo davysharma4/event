@@ -11,11 +11,12 @@ const ResetToken = require('../models/passwordResetToken');
 require('dotenv').config();
 
 router.route('/username')
-.get((req, res, next)=>
+.post((req, res, next)=>
 {
     User.findOne({emailID: req.body.email})
     .then((user)=>
     {
+      console.log(req.body.email);
         var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email , pass: process.env.PASSWORD } });
         var mailOptions =
         {
@@ -37,7 +38,7 @@ router.route('/username')
           
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, status: 'An email has been sent to ' + req.body.email});
+          res.json({success: true, status: 'An email with your username has been sent to ' + req.body.email});
         });
     }, (err)=>next(err))
     .catch((err)=>next(err));
@@ -53,7 +54,7 @@ router.route('/password')
         token.save()
         .then((token)=>
         {
-            var link = 'https:\/\/' + req.headers.host + '\/forgot' + '\/password\/' + token.token;
+            var link = 'http:\/\/' + req.headers.host + '\/forgot' + '\/password\/' + token.token;
             var transporter = nodemailer.createTransport({ service: 'gmail', auth: { user: config.email , pass: process.env.PASSWORD } });
             var mailOptions =
             {
@@ -89,8 +90,12 @@ router.route('/password/:token')
   ResetToken.findOne({token: req.params.token})
   .then((token)=>
   {
-    //This is for the frontend. When user will click on the mail link, this request will be generated and this will open a form
-    //which will contain a post submit request as implemented below
+    res.statusCode = 200;
+    viewData=
+    {
+      prToken: token.token
+    }
+    res.render('forgot', viewData);
   }, (err)=>next(err))
   .catch((err)=>next(err));
 })

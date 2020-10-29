@@ -2,8 +2,8 @@
 <html>
     <head>
         <%- include('partials/head') %>
-        <link rel='stylesheet' href='stylesheets/home.css' />
-        <script src="javascripts/script.js"></script>
+        <link rel='stylesheet' href='/static/stylesheets/home.css' />
+        <script src="/static/javascripts/script.js"></script>
 
     </head>
     <body>
@@ -13,46 +13,25 @@
 
         <div class="row">
 
-          <div class="col-lg-4">
-            <img src="images/dance.gif" id="dance">
+
   
 
           </div>
 
-          <div class="col-lg-4">
-            <img src="images/logo.png" id="logo">
+          <div >
+            <img src="/static/images/logo.png" id="logo">
             <h1>Lost in Paradise</h1>
           </div>
 
-          <div class="col-lg-4 timer">
+          <div >
             <h3>Just</h3><br>
             <h2 id="countdown"></h2><br>
-            <h3>to go</h3>
+            <h3 id="bottom">to go</h3>
           </div>
 
         </div>
       </div>
-      <div class="footer">
-        <h2>Brought to you by Bug Slayers</h2>
-        <div class="row">
-          <div class="col-lg-4">
-            <h3>
-              Davy
-            </h3>
-          </div>
-          <div class="col-lg-4">
-            <h3>
-              Sarah
-            </h3>
-          </div>
-          <div class="col-lg-4">
-            <h3>
-              Rishabh
-            </h3>
-          </div>
-        </div>
-      </div>
-       
+      <%- include('partials/footer') %>
     </body>
     
 </html>

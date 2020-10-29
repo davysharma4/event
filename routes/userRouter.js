@@ -182,8 +182,8 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
   {//we only only verified users to login. We generate a JWT to the verified users
     var token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json({success: true, token: token, status: 'You are successfully logged in!'});
+    res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
+    res.redirect('http:\/\/' + req.headers.host);
   }
   else
   {
@@ -194,6 +194,12 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
 
   });
 
+router.get('/logout', (req, res, next)=>
+{
+  res.clearCookie('token');
+  res.statusCode = 200;
+  res.json({success: true, status: 'Logged out'})
+})
 
   //google signup/login. Scope mentions the required details of the user 
   router.get('/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
@@ -205,8 +211,8 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     {//if the user is found or created we generate a JWT for further requests
       var token = authenticate.getToken({_id: req.user._id});
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({success: true, token: token, status: 'You are successfully logged in!'});
+      res.cookie('token', token, { httpOnly: true , maxAge: 3600*24*1000});
+      res.redirect('http:\/\/' + req.headers.host);
     }
   });
 

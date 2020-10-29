@@ -14,10 +14,20 @@ h2
   padding-bottom: 3%;
 }
 
+.navbar
+{
+  background-color: rgb(216, 86, 0);
+}
+
+.center_div{
+  margin: 0 auto;
+}
+
 .main
 {
   margin: 0%;
   text-align: center;
+  background-image: url("../images/bg.jpg");
   background-color: rgb(255, 226, 146);
 }
 
@@ -31,6 +41,13 @@ h2
   color: aliceblue;
 }
 
+.forgot
+{
+  font-size: 2rem;
+  padding-top: 3%;
+  padding-bottom: 3%;
+}
+
 .footer
 {
   text-align: center;
@@ -39,9 +56,26 @@ h2
   padding: 5% 2% 5%;
 }
 
-.timer
+.google
 {
-  padding: 7%;
+  text-align: center;  
+}
+
+.fa-google
+{
+  font-size: 2rem;
+}
+
+.fa-google:hover
+{
+  color: red;
+  text-decoration: none;
+}
+
+#bottom
+{
+  margin-bottom: 0%;
+  padding-bottom: 2%;
 }
 
 #navLogo
@@ -55,11 +89,12 @@ h2
   font-family: 'Monoton', cursive;
   color: rgb(255, 6, 6);
   font-size: 3rem;
+  padding-bottom: 0%;
 }
 
 #logo
 {
-  margin-top: 7%;
+  margin-top: 3%;
   height: 250px;
   width: 250px;
 }

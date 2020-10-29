@@ -21,7 +21,7 @@ exports.getToken = (user) =>
 }
 
 var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = req => req.cookies.token;
 opts.secretOrKey = process.env.SECRET_KEY;
 
 passport.use(new JwtStrategy(opts, (jwt_payload, done) =>
