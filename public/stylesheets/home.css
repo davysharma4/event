@@ -6,7 +6,7 @@ h1
 
 body
 {
-  font-family: 'Henny Penny', cursive;
+  font-family: 'Architects Daughter', cursive;
 }
 
 h2
@@ -14,9 +14,21 @@ h2
   padding-bottom: 3%;
 }
 
+.main-txt
+{
+  font-size: 3rem;
+}
+
 .navbar
 {
   background-color: rgb(216, 86, 0);
+  padding-top: 0%;
+  padding-bottom: 0%;
+}
+
+.navbar-brand
+{
+  font-family: 'Grandstander', cursive;
 }
 
 .center_div{
@@ -52,8 +64,8 @@ h2
 {
   text-align: center;
   color: aliceblue;
-  background-color: hsl(0, 0%, 0%);
-  padding: 5% 2% 5%;
+  background-color: hsl(30, 100%, 14%);
+  padding: 2% 5% 2%;
 }
 
 .google
@@ -80,15 +92,14 @@ h2
 
 #navLogo
 {
-  height: 5rem;
-  width: 5rem;
+  width: 4rem;
 }
 
 #countdown
 {
-  font-family: 'Monoton', cursive;
+  font-family: 'Black Ops One', cursive;
   color: rgb(255, 6, 6);
-  font-size: 3rem;
+  font-size: 4rem;
   padding-bottom: 0%;
 }
 
