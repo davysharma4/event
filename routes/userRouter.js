@@ -31,8 +31,8 @@ router.post('/signup', (req, res, next) => {
     if(err)
     {
       res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});
+      req.flash('error', 'Username or email already taken');
+      res.redirect('/');
     }
     else
     {
@@ -47,8 +47,8 @@ router.post('/signup', (req, res, next) => {
         if (err)
         {
           res.statusCode = 500;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({err: err});
+          req.flash('error', err.message);
+          res.redirect('/');
           return;
         }
         else
@@ -62,8 +62,8 @@ router.post('/signup', (req, res, next) => {
             if (err)
             {
               res.statusCode = 500;
-              res.setHeader('Content-Type', 'application/json');
-              res.json({err: err});
+              req.flash('error', err.message);
+              res.redirect('/');
               return;
             }
             
@@ -84,14 +84,14 @@ router.post('/signup', (req, res, next) => {
               if (err)
               {
                 res.statusCode = 500;
-                res.setHeader('Content-Type', 'application/json');
-                res.json({err: err});
+                req.flash('error', err.message);
+                res.redirect('/');
                 return;
               }
               
               res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json({success: true, status: 'A verification email has been sent to ' + user.emailID});
+              req.flash('success', 'A verification email has been sent to ' + user.emailID+'. Please verify your Email ID.');
+              res.redirect('/');
             });
           });
         }
@@ -114,8 +114,8 @@ router.post('/confirmation/:token', (req, res, next)=>
       {
         //This is in case user generates another token or click the same link again
         res.statusCode = 400;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({status: 'You are already verified'});
+        req.flash('error', 'Your email has already been verified');
+        res.redirect('/');
       }
 
       else
@@ -126,8 +126,8 @@ router.post('/confirmation/:token', (req, res, next)=>
         .then((user)=>
         {
           res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({status: 'You are successfully verified'});
+          req.flash('success', 'Your email has been verified successfully');
+          res.redirect('/');
         },(err)=>next(err));
       }
     },(err)=>next(err));
@@ -138,14 +138,21 @@ router.post('/confirmation/:token', (req, res, next)=>
 //This is required if the user fails to open the link sent via mail in specified time
 router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, next)=>
 {
+  if(req.user.emailVerified == true)
+  {
+    //This is in case user generates another token or click the same link again
+    res.statusCode = 400;
+    req.flash('error', 'Your email has already been verified');
+    res.redirect('/');
+  }
   var token = new Token({user: req.user._id, token: crypto.randomBytes(16).toString('hex')});
   token.save((err, token)=>
   {
     if (err)
     {
       res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({err: err});
+      req.flash('error', err.message);
+      res.redirect('/');
       return;
     }
 
@@ -165,14 +172,14 @@ router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, ne
       if (err)
       {
         res.statusCode = 500;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({err: err});
+        req.flash('error', err.message);
+        res.redirect('/');
         return;
       }
       
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({success: true, status: 'A verification email has been sent to ' + req.user.emailID});
+      req.flash('success', 'A verification email has been sent to ' + req.user.emailID+'. Please verify your Email ID.')
+      res.redirect('/');
     });
   });
 });
@@ -183,13 +190,14 @@ router.post('/login', passport.authenticate('local'), (req, res) => {
     var token = authenticate.getToken({_id: req.user._id});
     res.statusCode = 200;
     res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
-    res.redirect('http:\/\/' + req.headers.host);
+    req.flash('success', 'You are successfully logged in!');
+    res.redirect('/');
   }
   else
   {
     res.statusCode = 401;
-    res.setHeader('Content-Type', 'application/json');
-    res.json({success: false, status: 'Please verify your email first'});
+    req.flash('error', 'Please verify your email before logging in');
+    res.redirect('/');
   }
 
   });
@@ -198,7 +206,8 @@ router.get('/logout', (req, res, next)=>
 {
   res.clearCookie('token');
   res.statusCode = 200;
-  res.json({success: true, status: 'Logged out'})
+  req.flash('success', 'Logged you out successfully');
+  res.redirect('/');
 })
 
   //google signup/login. Scope mentions the required details of the user 
@@ -212,7 +221,8 @@ router.get('/logout', (req, res, next)=>
       var token = authenticate.getToken({_id: req.user._id});
       res.statusCode = 200;
       res.cookie('token', token, { httpOnly: true , maxAge: 3600*24*1000});
-      res.redirect('http:\/\/' + req.headers.host);
+      req.flash('success', 'You are successfully logged in!');
+      res.redirect('/');
     }
   });
 

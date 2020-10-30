@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const config = require('./config');
 const url = config.mongoURL;
 var passport = require('passport');
+const session = require('express-session');
+const flash = require('connect-flash');
 
 
 require('dotenv').config();
@@ -21,7 +23,7 @@ const { mongo, Mongoose } = require('mongoose');
 const { db } = require('./models/user');
 
 
-mongoose.connect(url)
+mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
 .then((db)=>
 {
   console.log("Connected to database");
@@ -37,7 +39,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
-app.use(cookieParser());
+app.use(cookieParser(process.env.COO_KEY));
+app.use(session({ 
+  resave: false,
+  saveUninitialized: false,
+  secret: process.env.COO_KEY,
+  cookie: {maxAge: 60000}}));
+app.use(flash());
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
