@@ -37,8 +37,8 @@ router.route('/username')
           }
           
           res.statusCode = 200;
-          res.setHeader('Content-Type', 'application/json');
-          res.json({success: true, status: 'An email with your username has been sent to ' + req.body.email});
+          req.flash('success', 'An email with your username has been sent to ' + req.body.email);
+          res.redirect('/');
         });
     }, (err)=>next(err))
     .catch((err)=>next(err));
@@ -76,8 +76,8 @@ router.route('/password')
               }
               
               res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.json({success: true, status: 'An email has been sent to ' + req.body.email + 'giving further instructions'});
+              req.flash('success', 'An email regarding further instructions has been sent to ' + req.body.email);
+              res.redirect('/');
             });
         }, (err)=>next(err));
     }, (err)=>next(err))

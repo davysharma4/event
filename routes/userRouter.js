@@ -184,22 +184,47 @@ router.post('/resendVerifyToken',  passport.authenticate('local'), (req, res, ne
   });
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
-  if(req.user.emailVerified == true)
-  {//we only only verified users to login. We generate a JWT to the verified users
-    var token = authenticate.getToken({_id: req.user._id});
-    res.statusCode = 200;
-    res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
-    req.flash('success', 'You are successfully logged in!');
-    res.redirect('/');
-  }
-  else
+router.post('/login', (req, res, next) =>
+{
+  passport.authenticate('local', (err, user)=>
   {
-    res.statusCode = 401;
-    req.flash('error', 'Please verify your email before logging in');
-    res.redirect('/');
-  }
-
+    if(err)
+    {
+      console.log('a');
+      res.statusCode = 500;
+      return next(err);
+    }
+    if(!user)
+    {
+      console.log('b');
+      res.statusCode = 401;
+      req.flash('error', 'Invalid username or password');
+      res.redirect('/');
+    }
+    req.login(user, (err)=>{
+      if(err)
+      {
+        console.log('c');
+        res.statusCode = 500;
+        return next(err);
+      }
+      if(req.user.emailVerified == true)
+      {//we only only verified users to login. We generate a JWT to the verified users
+        console.log('d');
+        var token = authenticate.getToken({_id: req.user._id});
+        res.statusCode = 200;
+        res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
+        req.flash('success', 'You are successfully logged in!');
+        res.redirect('/');
+      }
+      else
+      {
+        res.statusCode = 401;
+        req.flash('error', 'Please verify your email before logging in');
+        res.redirect('/');
+      }
+    });
+  })(req, res, next);
   });
 
 router.get('/logout', (req, res, next)=>

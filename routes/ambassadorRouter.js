@@ -13,7 +13,7 @@ require('dotenv').config();
 
 
 //this route for the admins to fetch the list of campus ambassadors
-router.route('/')
+router.route('/list')
 .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
     User.find({campusAmbassador: true})
