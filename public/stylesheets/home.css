@@ -12,6 +12,7 @@ body
 h2
 {
   padding-bottom: 3%;
+  margin: 0%;
 }
 
 .main-txt
@@ -41,6 +42,7 @@ h2
   text-align: center;
   background-image: url("../images/bg.jpg");
   background-color: rgb(255, 226, 146);
+  padding-bottom: 2%;
 }
 
 .nav-item

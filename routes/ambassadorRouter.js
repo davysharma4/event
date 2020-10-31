@@ -12,6 +12,23 @@ const invites = require('../models/invites');
 require('dotenv').config();
 
 
+router.route('/')
+.get(authenticate.verifyUser, (req, res, next)=>
+{
+  res.sendStatus = 200;
+  var viewData = 
+  {
+    admin: req.user.admin,
+    ca: req.user.campusAmbassador,
+    flashMessage: 
+      {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+  };
+  res.render('ambassador', viewData);
+});
+
 //this route for the admins to fetch the list of campus ambassadors
 router.route('/list')
 .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
@@ -63,8 +80,8 @@ router.route('/requests')
       if(result)
       {
         res.statusCode = 400;
-        res.setHeader('Content-Type','application/json');
-        res.json({success: true, status: "Your request already exists"});
+        req.flash('error', 'You have already posted a request and it\'s being reviewed');
+        res.redirect('/campusAmbassadors');
       }
 
       else
@@ -74,8 +91,8 @@ router.route('/requests')
         .then((request)=>
         {
           res.statusCode = 200;
-          res.setHeader('Content-Type','application/json');
-          res.json({success: true, status: "Request posted successfully"});
+          req.flash('success', 'Your request has been posted successfully');
+          res.redirect('/campusAmbassadors');
         },(err)=>next(err));
       }
     },(err)=>next(err))
@@ -85,8 +102,8 @@ router.route('/requests')
   else
   {
     res.statusCode = 400;
-    res.setHeader('Content-Type','application/json');
-    res.json({success: false, status: "You are already a campus ambassador"});
+    req.flash('error', 'You are already a Ambassador');
+    res.redirect('/campusAmbassadors');
   }
 })
 .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
@@ -192,8 +209,8 @@ router.route('/invite')
     if(result)
     {//only one invite to one user per campus ambassador
       res.statusCode = 400;
-      res.setHeader('Content-type','application/json');
-      res.json({status: 'You already invited this user'});
+      req.flash('error', 'You have already sent an invite to this email');
+      res.redirect('/campusAmbassadors');
       return;
     }
 
@@ -226,8 +243,8 @@ router.route('/invite')
         }
         
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({success: true, status: 'Invited ' + req.body.name});
+        req.flash('success', 'Invitation sent to ' + req.body.email);
+        res.redirect('/campusAmbassadors');
       });
     }
   }, (err)=>next(err))

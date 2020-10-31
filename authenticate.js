@@ -39,7 +39,32 @@ passport.use(new JwtStrategy(opts, (jwt_payload, done) =>
         });
     }));
 
-exports.verifyUser = passport.authenticate('jwt', {session: false});
+exports.verifyUser =  (req, res, next)=>
+{
+    passport.authenticate('jwt', { session: false }, function(err, user, info) {
+
+        if(err)
+        {
+          res.statusCode = 500;
+          return next(err);
+        }
+        if(!user)
+        {
+          res.statusCode = 401;
+          req.flash('error', 'You need to be logged in to access this');
+          res.redirect('/');
+        }
+        req.login(user, (err)=>{
+          if(err)
+          {
+            res.statusCode = 500;
+            return next(err);
+          }
+          return next();
+        });
+      })(req, res, next);
+}
+
 //this generates req.user property whic is used to access the detials of the user
 
 exports.verifyAdmin = (req, res, next)=>

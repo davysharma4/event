@@ -12,22 +12,7 @@
 
       <div class="main">
         
-          <% if ( flashMessage.success.length > 0) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <%= flashMessage.success %>
-            <button type="button" class="close" id="alert-btn" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-            <% } %>
-            <% if ( flashMessage.error.length > 0) { %>
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <%= flashMessage.error %>
-              <button type="button" class="close" id="alert-btn" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-              <% } %>
+        <%- include('partials/flash') %>
         
         <div class="row">
 

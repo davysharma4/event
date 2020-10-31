@@ -190,13 +190,11 @@ router.post('/login', (req, res, next) =>
   {
     if(err)
     {
-      console.log('a');
       res.statusCode = 500;
       return next(err);
     }
     if(!user)
     {
-      console.log('b');
       res.statusCode = 401;
       req.flash('error', 'Invalid username or password');
       res.redirect('/');
@@ -204,13 +202,11 @@ router.post('/login', (req, res, next) =>
     req.login(user, (err)=>{
       if(err)
       {
-        console.log('c');
         res.statusCode = 500;
         return next(err);
       }
       if(req.user.emailVerified == true)
       {//we only only verified users to login. We generate a JWT to the verified users
-        console.log('d');
         var token = authenticate.getToken({_id: req.user._id});
         res.statusCode = 200;
         res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
