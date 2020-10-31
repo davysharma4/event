@@ -72,11 +72,22 @@ router.route('/requests')
 {
   //admins can see all the requests posted by users to be campus ambassadors
   Request.find({})
+  .populate('user')
   .then((requests)=>
   {
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json(requests);
+    var viewData = 
+    {
+      listOf: 'all requests to be Campus Ambassador',
+      requests: requests,
+      flashMessage: 
+      {
+        success: req.flash('success'),
+        error: req.flash('error')
+      }
+    };
+    res.statusCode = 200;
+    res.render('requests',viewData);
   },(err)=>next(err))
   .catch((err)=>next(err));
 })
@@ -115,73 +126,60 @@ router.route('/requests')
     req.flash('error', 'You are already a Ambassador');
     res.redirect('/campusAmbassadors');
   }
-})
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+});
+router.route('/requests/delete')
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {//admins can remove all the requests
   Request.remove({})
   .then((requests)=>
   {
     res.statusCode=200;
-    res.setHeader('Content-Type','Application/JSON');
-    res.json(requests);
+    req.flash('success', 'Deleted all the requests.');
+    res.redirect('/campusAmbassadors/requests');
   },(err)=>next(err))
   .catch((err)=>next(err));
 });
 
 router.route('/requests/:reqID')
-.get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{//admin can see a particular request
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+{//this is to accept the request
   Request.findOne({_id: req.params.reqID})
   .then((request)=>
   {
-    res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json(request);
-  },(err)=>next(err))
-  .catch((err)=>next(err));
-})
-.put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
-{//this operation either accepts or declines a request. if the accept field in body is true...then request is accepted
-  var accepted = "Request declined";
-  Request.findOne({_id: req.params.reqID})
-  .then((request)=>
-  {
-    if(req.body.accept == true)
-    {
-      accepted = "Request accepted";
       User.findOne({_id: request.user})
       .then((user)=>
       {
         user.campusAmbassador = true;
         user.save();
       },(err)=>next(err));
-    }
   },(err)=>next(err))
   .catch((err)=>next(err))
 
   Request.findByIdAndRemove(req.params.reqID)
   .then((request)=>
-  {//after accepting or rejecting a request, the request is deleted
+  {
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json({status: accepted});
+    req.flash('success', 'Accepted the request. The user is now a Campus Ambassador.');
+    res.redirect('/campusAmbassadors/requests');
   },(err)=>next(err))
   .catch((err)=>next(err));
 })
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+
+router.route('/requests/:reqID/delete')
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {//admins can delete a particular request
   Request.findByIdAndRemove(req.params.reqID)
   .then((request)=>
   {
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json(request);
+    req.flash('success', 'Declined the users request to be a Campus Ambassador');
+    res.redirect('/campusAmbassadors/requests');
   },(err)=>next(err))
   .catch((err)=>next(err));
 });
 
 router.route('/makeCampusAmbassador')
-.put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
   //admins can make users campus ambassadors directly by using the username of the user
   User.findOne({username: req.body.username})
@@ -190,8 +188,8 @@ router.route('/makeCampusAmbassador')
     if(user.campusAmbassador == true)
     {
       res.statusCode = 400;
-      res.setHeader('Content-Type', 'application/json');
-      res.json({status: 'User is already a campus ambassador'});
+      req.flash('error', ''+user.username + ' is already a Campus Ambassador');
+      res.redirect('/campusAmbassadors');
     }
 
     else
@@ -201,8 +199,8 @@ router.route('/makeCampusAmbassador')
       .then((user)=>
       {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json({status: 'User is now a campus ambassador'});
+        req.flash('success', ''+user.username + ' is now a campus ambassador');
+        res.redirect('/campusAmbassadors');
       },(err)=>next(err));
     }
   },(err)=>next(err))

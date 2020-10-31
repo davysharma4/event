@@ -47,6 +47,20 @@
                     <br><hr>
                     <h4>You can fetch a list of all Campus Ambassadors</h4>
                     <a href="/campusAmbassadors/list"><button class="btn btn-lg btn-danger">Campus Ambassadors</button></a>
+                    <br><hr>
+                    <h4>You can fetch a list of all the requests posted to be Campus Ambassadors</h4>
+                    <a href="/campusAmbassadors/requests"><button class="btn btn-lg btn-danger">Requests</button></a>
+                    <br><hr>
+                    <h4>You can directly make a user a Campus Ambassador by providing their username</h4>
+                    <form action="/campusAmbassadors/makeCampusAmbassador" method="POST">
+                        <div class="form-group row">
+                            <div class="col-md-4 col-md-offset-4 center_div">
+                                <label for="username">Enter the username here:</label>
+                                <input type="text" class="form-control" placeholder="Enter username" name="username" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-danger">Make Campus Ambassador</button>
+                    </form>
                 </div><hr>
             <%}%>
         </div>
