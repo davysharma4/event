@@ -11,7 +11,6 @@ const Invite = require('../models/invites');
 const invites = require('../models/invites');
 require('dotenv').config();
 
-
 router.route('/')
 .get(authenticate.verifyUser, (req, res, next)=>
 {
@@ -20,6 +19,7 @@ router.route('/')
   {
     admin: req.user.admin,
     ca: req.user.campusAmbassador,
+    points: req.user.points,
     flashMessage: 
       {
         success: req.flash('success'),
@@ -37,8 +37,13 @@ router.route('/list')
     .then((users)=>
     {
       res.statusCode = 200;
-      res.setHeader('Content-Type','application/json');
-      res.json(users);
+      var viewData = 
+      {
+        listOf: 'all Campus Ambassadors',
+        users: users
+      };
+      res.statusCode = 200;
+      res.render('users',viewData);
     }, (err)=>next(err))
     .catch((err)=>next(err));
 });
@@ -50,9 +55,14 @@ router.route('/myCollegeUsers')
   User.find({college: req.user.college})
   .then((users)=>
   {
+    var viewData = 
+    {
+      listOf: 'your College users',
+      users: users
+    };
     res.statusCode = 200;
-    res.setHeader('Content-Type','application/json');
-    res.json(users);
+    res.render('users',viewData);
+
   }, (err)=>next(err))
   .catch((err)=>next(err));
 });

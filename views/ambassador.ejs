@@ -9,6 +9,7 @@
         <div class="main">
             <%- include('partials/flash') %>
             <h2>Campus Ambassadors</h2>
+            <img src="/static/images/calogo.png" id="ca-logo">
             <%if(!ca){%>
                 <div>
                     You are not a Campus Ambassador<br>
@@ -21,20 +22,33 @@
                 <%}%>
             <%if(ca){%>
                 <div>
-                    You are a Campus Ambassador.<br>
-                    Help us by inviting people to Paradis website via email.
+                    <h3>You are a Campus Ambassador and your points are: <%=points%></h3>
+                    
+                   <h4>Help us by inviting people to Paradis website via email. You'll get a point for each accepted invite</h4>
                     <form action="/campusAmbassadors/invite" method="POST">
                         <div class="form-group row">
                             <div class="col-md-4 col-md-offset-4 center_div">
                                 <label for="email">Just enter the email  of the person to be invited here:</label>
                                 <input type="email" class="form-control" placeholder="Enter email" name="email" required>
                             </div>
-        
                         </div>
                         <button type="submit" class="btn btn-lg btn-danger">Invite</button>
                     </form>
-                </div>
+                    <hr>
+                    <h4>You can see the list of people from your college who have registered at Paradis website.</h4>
+                    <a href="/campusAmbassadors/myCollegeUsers"><button class="btn btn-lg btn-danger">My College Users</button></a>
+                </div><hr>
                 <%}%>
+            <%if(admin){%>
+                <div>
+                    <h3>You are an admin</h3>
+                    <h4>You can fetch a list of all the users on the Paradis website.</h4>
+                    <a href="/users"><button class="btn btn-lg btn-danger">Get Users</button></a>
+                    <br><hr>
+                    <h4>You can fetch a list of all Campus Ambassadors</h4>
+                    <a href="/campusAmbassadors/list"><button class="btn btn-lg btn-danger">Campus Ambassadors</button></a>
+                </div><hr>
+            <%}%>
         </div>
         <%- include('partials/footer') %>
     </body>

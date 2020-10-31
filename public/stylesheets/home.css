@@ -43,6 +43,7 @@ h2
   background-image: url("../images/bg.jpg");
   background-color: rgb(255, 226, 146);
   padding-bottom: 2%;
+  padding-top: 2%;
 }
 
 .nav-item
@@ -110,6 +111,11 @@ h2
   margin-top: 3%;
   height: 250px;
   width: 250px;
+}
+
+#ca-logo
+{
+  width: 150px;
 }
 
 #dance

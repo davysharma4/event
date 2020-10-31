@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('partials/head') %>
+        <link rel='stylesheet' href='/static/stylesheets/home.css' />
+    </head>
+    <body>
+        <%- include('partials/navbar')%>
+        <div class="main">
+            <img src="/static/images/listlogo.png" id="ca-logo">
+            <h2>The list of <%=listOf%> is</h2>
+            <%for(var i = 0; i<users.length; i++){%>
+            <div>
+                <h4>Username: <%=users[i].username%></h4>
+                Full name: <%=users[i].firstname%> <%=users[i].lastname%>
+            </div><br>
+            <%}%>
+        </div>
+
+        <%- include('partials/footer') %>
+    </body>
+</html>

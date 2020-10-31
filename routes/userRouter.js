@@ -18,8 +18,13 @@ router.route('/')
   .then((users)=>
   {
       res.statusCode=200;
-      res.setHeader('Content-Type','Application/JSON');
-      res.json(users);
+      var viewData = 
+      {
+        listOf: 'all the users',
+        users: users
+      };
+      res.statusCode = 200;
+      res.render('users',viewData)
   },(err)=>next(err))
   .catch((err)=>next(err));
 });
