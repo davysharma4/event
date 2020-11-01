@@ -64,10 +64,12 @@
                 <h2><%=events[i].name%></h2>
                 <img src="<%=events[i].img%>" class = "event"><br><br>
                 <a href="/event/<%=events[i]._id%>"><button class="btn btn-md btn-danger">Learn More</button></a>
+                <%if(admin){%>
                 <form action="/event/<%=events[i]._id%>/delete" method="POST">
                     <br>
                     <button type="submit" class="btn btn-danger btn-md">Delete</button>
                 </form>
+                <%}%>
             </div><hr>
             <%}%>
         </div>

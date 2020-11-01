@@ -15,10 +15,25 @@
                 <h3><%=event.description%></h3>
             </div><hr>
             <div>
+                <h3>Post a comment: </h3>
+                <form action="/event/<%=event._id%>/comments" method="POST">
+                    <div class="form-group">
+                        <label for="comment">Comment:</label>
+                        <textarea class="form-control" name="comment" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-lg">Post Comment</button>
+                </form>
                 <h4>Here's what our users comment about this event:</h4>
                 <%for(var i = 0; i<comments.length; i++){%>
                     <div>
                         <h5><%=comments[i].user.username%> says: <%=comments[i].comment%></h5>
+                        <%var str1 =''+user; %>
+                        <%var str2 =''+ comments[i].user._id;%>
+                        <%if(str1===str2){%>
+                            <form action="/event/<%=event._id%>/comments/<%=comments[i]._id%>/delete" method="POST">
+                                <button type="submit" class="btn btn-danger btn-md">Delete Comment</button>
+                            </form>
+                            <%}%>
                     </div><hr>
                     <%}%>
             </div>

@@ -89,7 +89,7 @@ router.route('/delete')
 });
 
 router.route('/:eventID')
-.get((req, res, next)=>
+.get(authenticate.verifyUser, (req, res, next)=>
 {
     Event.findOne({_id: req.params.eventID})
     .then((event)=>
@@ -101,6 +101,7 @@ router.route('/:eventID')
             res.statusCode = 200;
             var viewData = 
             {
+                user: req.user._id,
                 event: event,
                 comments: comments,
                 flashMessage: 
@@ -122,8 +123,8 @@ router.route('/:eventID/delete')
     .then((event)=>
     {
         res.statusCode = 200;
-        req.flash('success', 'Deleted the event')
-        res.redirect('/event')
+        req.flash('success', 'Deleted the event');
+        res.redirect('/event/');
         
     }, (err)=>next(err))
     .catch((err)=>next(err));
@@ -144,14 +145,14 @@ router.route('/:eventID/comments')
     .then((comment)=>
     {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(comment);
+        req.flash('success', 'Posted your comment');
+        res.redirect('/event/'+comment.event);
     }, (err)=>next(err))
     .catch((err)=>next(err));
 });
 
-router.route('/:eventID/comments/:commentID')
-.delete(authenticate.verifyUser, (req, res, next)=>
+router.route('/:eventID/comments/:commentID/delete')
+.post(authenticate.verifyUser, (req, res, next)=>
 {
     Comment.findOne({_id: req.params.commentID})
     .then((comment)=>
@@ -167,8 +168,8 @@ router.route('/:eventID/comments/:commentID')
             .then((comment)=>
             {
                 res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(comment);
+                req.flash('success', 'Deleted your comment');
+                res.redirect('/event/'+comment.event);
             }, (err)=>next(err))
             .catch((err)=>next(err));
         }
