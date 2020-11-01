@@ -21,7 +21,8 @@ router.route('/')
       var viewData = 
       {
         listOf: 'all the users',
-        users: users
+        users: users,
+        showPoints: false
       };
       res.statusCode = 200;
       res.render('users',viewData)
@@ -213,6 +214,7 @@ router.post('/login', (req, res, next) =>
       if(req.user.emailVerified == true)
       {//we only only verified users to login. We generate a JWT to the verified users
         var token = authenticate.getToken({_id: req.user._id});
+        res.clearCookie('token');
         res.statusCode = 200;
         res.cookie('token', token, { httpOnly: true, maxAge: 3600*24*1000});
         req.flash('success', 'You are successfully logged in!');

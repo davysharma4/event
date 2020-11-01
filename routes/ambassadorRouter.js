@@ -9,6 +9,7 @@ const Request = require('../models/ambassadorReq');
 const { request } = require('express');
 const Invite = require('../models/invites');
 const invites = require('../models/invites');
+const { UnavailableForLegalReasons } = require('http-errors');
 require('dotenv').config();
 
 router.route('/')
@@ -40,7 +41,8 @@ router.route('/list')
       var viewData = 
       {
         listOf: 'all Campus Ambassadors',
-        users: users
+        users: users,
+        showPoints: true
       };
       res.statusCode = 200;
       res.render('users',viewData);
@@ -58,7 +60,8 @@ router.route('/myCollegeUsers')
     var viewData = 
     {
       listOf: 'your College users',
-      users: users
+      users: users,
+      showPoints: false
     };
     res.statusCode = 200;
     res.render('users',viewData);

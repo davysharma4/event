@@ -12,7 +12,10 @@
             <%for(var i = 0; i<users.length; i++){%>
             <div>
                 <h4>Username: <%=users[i].username%></h4>
-                Full name: <%=users[i].firstname%> <%=users[i].lastname%>
+                Full name: <%=users[i].firstname%> <%=users[i].lastname%><br>
+                <%if(showPoints){%>
+                    Points: <%=users[i].points%>
+                    <%}%>
             </div><hr>
             <%}%>
         </div>

@@ -42,8 +42,7 @@ h2
   text-align: center;
   background-image: url("../images/bg.jpg");
   background-color: rgb(255, 226, 146);
-  padding-bottom: 2%;
-  padding-top: 2%;
+  padding: 2%;
 }
 
 .nav-item
