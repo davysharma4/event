@@ -31,19 +31,24 @@ const imageFileFilter = (req, file, cb)=>
 const upload = multer({ storage: storage, fileFilter: imageFileFilter});
 
 router.route('/')
-.get((req, res, next)=>
-{//Anyone can see the posts
+.get(authenticate.verifyUser, (req, res, next)=>
+{//Registered users can see the events
     Event.find({})
-    .then((event)=>
+    .then((events)=>
     {
         
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
         var viewData = 
         {
-            n: event
+            admin: req.user.admin,
+            events: events,
+            flashMessage: 
+            {
+              success: req.flash('success'),
+              error: req.flash('error')
+            }
         };
-        res.render('event', viewData);
+        res.render('events', viewData);
         
     }, (err)=>next(err))
     .catch((err)=>next(err));
@@ -55,7 +60,7 @@ router.route('/')
         name: req.body.name, 
         description: req.body.description,
         //We store the path so that images can be accessed later
-        img: path.join(__dirname + '/../public/images/' + req.file.filename)
+        img: '/static/images/' + req.file.filename
     });
 
 
@@ -63,20 +68,22 @@ router.route('/')
     .then((event)=>
     {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(event);
+        req.flash('success', 'Posted the event successfully')
+        res.redirect('/event')
     }, (err)=>next(err))
     .catch((err)=>next(err));
 
-})
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+});
+
+router.route('/delete')
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {//Admins can delete all events at once
     Event.remove({})
     .then((events)=>
     {
         res.statusCode=200;
-        res.setHeader('Content-Type','Application/JSON');
-        res.json(events);
+        req.flash('success', 'Deleted all the events')
+        res.redirect('/event')
     }, (err)=>next(err))
     .catch((err)=>next(err));
 });
@@ -87,21 +94,36 @@ router.route('/:eventID')
     Event.findOne({_id: req.params.eventID})
     .then((event)=>
     {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(event);
-        
+        Comment.find({event: event._id})
+        .populate('user')
+        .then((comments)=>
+        {
+            res.statusCode = 200;
+            var viewData = 
+            {
+                event: event,
+                comments: comments,
+                flashMessage: 
+                {
+                  success: req.flash('success'),
+                  error: req.flash('error')
+                }
+            };
+            res.render('event', viewData);
+        }, (err)=>next(err));
     }, (err)=>next(err))
     .catch((err)=>next(err));
-})
-.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
+});
+
+router.route('/:eventID/delete')
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next)=>
 {
     Event.findByIdAndRemove({_id: req.params.eventID})
     .then((event)=>
     {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(event);
+        req.flash('success', 'Deleted the event')
+        res.redirect('/event')
         
     }, (err)=>next(err))
     .catch((err)=>next(err));
@@ -109,18 +131,6 @@ router.route('/:eventID')
 
 //This handles the comments posted
 router.route('/:eventID/comments')
-.get((req, res, next)=>
-{//Anyone can see the comments
-    Comment.find({})
-    .populate('user')
-    .then((comments)=>
-    {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(comments);
-    }, (err)=>next(err))
-    .catch((err)=>next(err));
-})
 .post(authenticate.verifyUser, (req, res, next)=>
 {//Only registered users can post comments
     var comment = new Comment(

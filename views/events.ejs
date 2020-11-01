@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <%- include('partials/head') %>
+        <link rel='stylesheet' href='/static/stylesheets/home.css' />
+    </head>
+    <body>
+        <%- include('partials/navbar')%>
+        <div class="main">
+            <%- include('partials/flash') %>
+            <h1>Events in the Paradis</h1>
+            <img src="/static/images/listlogo.png" id="ca-logo">
+            
+            <%if(admin){%>
+                <div>
+                    <a class="nav-link" data-toggle="modal" data-target="#post"><button class="btn btn-lg btn-danger">Post an Event</button></a>
+                    <div class="modal" id="post">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                          
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                              <h4 class="modal-title">Post an Event</h4>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div><br>
+                            
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                              <form action="/event" method="POST" enctype="multipart/form-data">
+                                <div class="form-group">
+                                  <label for="email">What's the name of the event?</label>
+                                  <input type="text" class="form-control" id="name" placeholder="Name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Describe the event</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div>
+                                      <input type="file" name="image" id="inputGroupFile02">
+                                    </div>
+                                  </div>
+                                <button type="submit" class="btn btn-primary">Post</button>
+                              </form>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                          <h2>You can delete all the events. Proceed with caution</h2>
+                        <form action="/event/delete" method="POST">
+                            <button type="submit" class="btn btn-danger btn-lg">Delete all Events</button>
+                        </form>
+                        <br>
+                      </div>
+                </div>
+                <%}%>
+            <%for(var i = 0; i<events.length; i++){%>
+            <div>
+                <h2><%=events[i].name%></h2>
+                <img src="<%=events[i].img%>" class = "event"><br><br>
+                <a href="/event/<%=events[i]._id%>"><button class="btn btn-md btn-danger">Learn More</button></a>
+                <form action="/event/<%=events[i]._id%>/delete" method="POST">
+                    <br>
+                    <button type="submit" class="btn btn-danger btn-md">Delete</button>
+                </form>
+            </div><hr>
+            <%}%>
+        </div>
+
+        <%- include('partials/footer') %>
+    </body>
+</html>

@@ -1,7 +1,29 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <%- include('partials/head') %>
+        <link rel='stylesheet' href='/static/stylesheets/home.css' />
+    </head>
     <body>
-        <h1 id="event"><%= n[0].name%></h1>
-        <button onclick="next()">Next</button>
+        <%- include('partials/navbar')%>
+        <div class="main">
+            <%- include('partials/flash') %>
+            <img src="/static/images/listlogo.png" id="ca-logo">
+            <div>
+                <h1><%=event.name%></h1>
+                <img src="<%=event.img%>" class = "event"><br><br>
+                <h3><%=event.description%></h3>
+            </div><hr>
+            <div>
+                <h4>Here's what our users comment about this event:</h4>
+                <%for(var i = 0; i<comments.length; i++){%>
+                    <div>
+                        <h5><%=comments[i].user.username%> says: <%=comments[i].comment%></h5>
+                    </div><hr>
+                    <%}%>
+            </div>
+        </div>
+
+        <%- include('partials/footer') %>
     </body>
 </html>
