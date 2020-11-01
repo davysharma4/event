@@ -93,6 +93,12 @@ h2
   text-decoration: none;
 }
 
+.avatar
+{
+  width: 9rem;
+  border-radius: 100%;
+}
+
 #bottom
 {
   margin-bottom: 0%;
@@ -117,6 +123,11 @@ h2
   margin-top: 3%;
   height: 250px;
   width: 250px;
+}
+
+#comment
+{
+  width: 60%;
 }
 
 #ca-logo
